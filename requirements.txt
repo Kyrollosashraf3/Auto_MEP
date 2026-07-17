@@ -1,12 +1,12 @@
+
+# database
 sqlalchemy
 psycopg2-binary
 alembic
 python-dotenv
 
 
-
-
-
+# fastapi
 fastapi ==  0.129.0
 uvicorn == 0.41.0
 python-multipart == 0.0.22  # for file upload
@@ -19,9 +19,6 @@ python-dotenv==1.0.0
 
 aiofiles == 25.1.0    # for save uploaded files as chunks in temp 
 
-# Reading files
-langchain == 1.2.10
-langchain-community == 0.4.1
 
 
 PyMuPDF==1.27.1
@@ -35,12 +32,11 @@ groq==0.37.1
 
 tiktoken==0.7.0 
 
-# WEB SEARCH
-perplexityai==0.20.0
+passlib[bcrypt]==1.7.4
 
-ftfy==6.3.1    
-pinecone==5.4.2 
+bcrypt==4.1.2
+       
+PyJWT==2.8.0    
+pydantic[email]==2.12.5
 
-# for embedding model HF
-sentence-transformers
-torch
+python-jose[cryptography]

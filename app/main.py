@@ -10,29 +10,20 @@ from fastapi import FastAPI, Request, status
 
 from app.routes.base import router as home_router
 from app.routes.chat import router as chat_router
-from app.routes.logs import router as logs_router
-from app.routes.rag import router as rag_router
-from app.routes.web_search import router as web_search_router
+from app.routes.auth import router as auth_router
 
 
-from app.routes.data import file_router 
-from app.routes.data import data_process_router 
-from app.routes.data import data_delete_router 
 
-from motor.motor_asyncio import AsyncIOMotorClient
-from app.config import settings
-from app.db import ProjectModel, AssetModel, chunkModel
 
 from app.config import get_logger
 logger = get_logger(__name__)
 
 # Create FastAPI app
 app = FastAPI(
-    title="MEGA_AI" ,
-    version="0.0.2",
-    description="Production-ready AI with Chat, Web Search, RAG, MongoDB, and Pinecone "
+    title="Auto_MEP" ,
+    version="0.0.1",
+    description="Auto MEP using AI"
 )
-
 
 
 # DataBase
@@ -46,11 +37,6 @@ from app.models.file import File
 Base.metadata.create_all(bind=engine)
 
 
-app.include_router(home_router)
+app.include_router(home_router) # Health check, usually kept public
 app.include_router(chat_router)
-app.include_router(web_search_router)
-app.include_router(file_router)
-app.include_router(data_process_router)
-app.include_router(rag_router)
-app.include_router(data_delete_router)
-app.include_router(logs_router)
+app.include_router(auth_router)

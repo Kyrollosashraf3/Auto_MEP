@@ -9,13 +9,19 @@ from app.core.llm.utils import get_model_family, validate_model_access ,prepare_
 from app.core.llm.call_handler import call_model_family
 from app.core.llm.token_counter import estimate_tokens_for_model, count_tokens_for_messages, format_usage_response
 
+
+
+from app.core.deps import get_current_user
+
+
 logger = get_logger(__name__)
  
 
-router = APIRouter(tags=["Chat"])
+router = APIRouter(tags=["Chat"], dependencies=[Depends(get_current_user)])
 
 @router.get("/models")
 async def get_models():
+
     try:
         with open(settings.MODELS_JSON_PATH, "r", encoding="utf-8") as f:
             models = json.load(f)

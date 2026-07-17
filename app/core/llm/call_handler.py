@@ -1,6 +1,6 @@
 from app.core.llm.utils import get_model_family, prepare_family_parameters
 from app.config.logger import get_logger
-from app.core.llm.perplexity import PerplexityError, SearchMode, get_perplexity_client
+
 from app.core.llm.families.google import get_response_google
 from app.core.llm.families.openai import get_response_openai
 from app.core.llm.families.groq  import get_response_groq

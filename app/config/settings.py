@@ -20,34 +20,23 @@ class Settings(BaseSettings):
     FILE_ALLOWED_SIZE: int 
 
     FILE_PATH: Path
-    FILE_DEFAULT_CHUNK_SIZE: int
 
-    MONGODB_URL: str
-    MONGODB_DATABASE: str
-
-    # Colection names
-    COLLECTION_PROJECT: str
-    COLLECTION_CHUNK: str
-    COLLECTION_ASSET: str
-    
+        
     # LLM  
     OPENAI_API_KEY: str
     GOOGLE_API_KEY: str
     GROQ_API_KEY: str
     MODELS_JSON_PATH: str
     
-    # web search
-    PERPLEXITY_API_KEY: str
-
-    # Pinecone
-    PINECONE_API_KEY: str
-    PINECONE_ENVIRONMENT: str
-    PINECONE_INDEX_NAME: str
-    PINECONE_DIMENSION: int
 
 
     # PostgreSQL
     DATABASE_URL: str
+
+    # JWT Authentication
+    SECRET_KEY: str = "supersecretkey_for_development_only_please_change"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
     model_config = SettingsConfigDict(
         env_file=".env",

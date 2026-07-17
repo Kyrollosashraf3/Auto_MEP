@@ -1,3 +1,4 @@
-from .schemas import ProcessRequest, MessageItem, ChunkSearchRequest, ChunkSearchResponse
+from .schemas import ProcessRequest, MessageItem, ChatRequest
 
-from .db_schemas import DataChunk , Project , Asset
+from .project import Project
+  
