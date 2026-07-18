@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     # App Settings
     APP_NAME: str
     APP_VERSION: str
+    APP_DESCRIPTION: str = ""
     DEBUG: bool
     HOST: str
     PORT: int
@@ -36,7 +37,7 @@ class Settings(BaseSettings):
     # JWT Authentication
     SECRET_KEY: str = "supersecretkey_for_development_only_please_change"
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 200
 
     model_config = SettingsConfigDict(
         env_file=".env",

@@ -40,3 +40,8 @@ pydantic[email]==2.12.5
 
 python-jose[cryptography]
 jinja2
+
+
+# EDA
+pandas
+openpyxl
