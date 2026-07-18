@@ -5,12 +5,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional , List
 
-class ProcessRequest(BaseModel):
-    file_id: str = None
-    chunk_size: Optional[int] = 100
-    overlap_size: Optional[int] = 20
-    do_reset: Optional[int] = 0
-
 
 class MessageItem(BaseModel):
     role: str
@@ -29,16 +23,3 @@ class ChatRequest(BaseModel):
     web_search_top_p: Optional[float] = None
     stream: Optional[bool] = False
 
-
-class WebSearchRequest(BaseModel):
-    query: str = Field(..., description="The search query for Perplexity")
-    mode: Optional[str] = Field("fast", description="Search mode: 'fast' or 'deep'")
-    max_tokens: Optional[int] = Field(1024, description="Maximum tokens for the response")
-    temperature: Optional[float] = Field(0.2, description="Sampling temperature")
-    top_p: Optional[float] = Field(0.9, description="Top-p sampling")
-
-class WebSearchResponse(BaseModel):
-    query: str
-    mode: str
-    content: str
-    citations: List[str] = []
