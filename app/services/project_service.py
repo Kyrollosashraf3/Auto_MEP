@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Session
 
 from app.models.project import Project
-from app.schemas.project import ProjectCreate
-from app.core.deps import get_current_user
-from app.db.database import get_db
-from fastapi import Depends
+from app.models.file import File
+
+from app.schemas.project import ProjectCreate, ProjectDetailsResponse
+from fastapi import HTTPException
 
 
 class ProjectService:
@@ -15,7 +15,6 @@ class ProjectService:
         project_data: ProjectCreate,
         owner_id: int
     ):
-
         project = Project(
             name=project_data.name,
             description=project_data.description,
@@ -50,7 +49,7 @@ class ProjectService:
         project = (
             db.query(Project)
             .filter(
-                Project.id == project_id and
+                Project.id == project_id,
                 Project.owner_id == user_id
             )
             .first()
@@ -68,4 +67,71 @@ class ProjectService:
         return {
             "message": f"Project {project_id} deleted successfully"
         }
-        
+
+    @staticmethod
+    def get_project_by_id(
+        db: Session,
+        project_id: int,
+        owner_id: int
+    ):
+
+       
+        project = (
+            db.query(Project)
+            .filter(
+                Project.id == project_id,
+                Project.owner_id == owner_id
+            )
+            .first()
+        )
+
+        if not project:
+            raise HTTPException(status_code=404, detail=f"Project with id ({project_id}) not found or access denied")
+
+        files = (
+            db.query(File)
+            .filter(File.project_id == project.id)
+            .all()
+        )
+
+        return ProjectDetailsResponse(
+            id=project.id,
+            name=project.name,
+            description=project.description,
+            owner_id=project.owner_id,
+            files=files,
+            created_at=project.created_at
+        )
+
+    @staticmethod
+    def get_project_by_name(
+        db: Session,
+        project_name: str,
+        owner_id: int
+    ):
+        project = (
+            db.query(Project)
+            .filter(
+                Project.name.ilike(f"%{project_name}%"),
+                Project.owner_id == owner_id
+            )
+            .first()
+        )
+
+        if not project:
+            raise HTTPException(status_code=404, detail=f"Project with name '{project_name}' not found or access denied")
+
+        files = (
+            db.query(File)
+            .filter(File.project_id == project.id)
+            .all()
+        )
+
+        return ProjectDetailsResponse(
+            id=project.id,
+            name=project.name,
+            description=project.description,
+            owner_id=project.owner_id,
+            files=files,
+            created_at=project.created_at
+        )

@@ -3,13 +3,15 @@ from sqlalchemy.orm import Session
 
 from app.db.database import get_db
 from typing import List
-from app.schemas.project import (
+from app.schemas import (
     ProjectCreate,
-    ProjectResponse
+    ProjectResponse,
+    ProjectDetailsResponse
 )
 
 from app.services.project_service import ProjectService
 from app.core.deps import get_current_user
+
 
 router = APIRouter(
     prefix="/projects",
@@ -45,7 +47,7 @@ def get_projects(
 
     return ProjectService.get_projects( 
             db=db,
-            owner_id=current_user.id)
+            owner_id=current_user.id)    
 
 
 @router.delete(
@@ -61,3 +63,38 @@ def delete_project(
             project_id=project_id,
             user_id=current_user.id
         )
+
+
+
+
+
+@router.get(
+    "/id/{project_id}",
+    response_model=ProjectDetailsResponse
+)
+def get_project_by_id(
+    project_id: int,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    return ProjectService.get_project_by_id(
+        db=db,
+        project_id=project_id,
+        owner_id=current_user.id
+    )
+
+
+@router.get(
+    "/name/{project_name}",
+    response_model=ProjectDetailsResponse
+)
+def get_project_by_name(
+    project_name: str,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    return ProjectService.get_project_by_name(
+        db=db,
+        project_name=project_name,
+        owner_id=current_user.id
+    )
