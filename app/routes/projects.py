@@ -46,3 +46,18 @@ def get_projects(
     return ProjectService.get_projects( 
             db=db,
             owner_id=current_user.id)
+
+
+@router.delete(
+    "/{project_id}"
+)
+def delete_project(
+    project_id: int,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    return ProjectService.delete_project(
+            db=db,
+            project_id=project_id,
+            user_id=current_user.id
+        )

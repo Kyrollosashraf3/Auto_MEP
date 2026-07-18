@@ -12,6 +12,7 @@ from app.routes.base import router as home_router
 from app.routes.chat import router as chat_router
 from app.routes.auth import router as auth_router
 from app.routes.projects import router as project_router
+
 from app.routes.files import router as file_router
 from app.routes.dashboard import router as dashboard_router
 

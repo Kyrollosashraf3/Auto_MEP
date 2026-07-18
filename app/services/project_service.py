@@ -40,3 +40,32 @@ class ProjectService:
             )
             .all()
         )
+
+    @staticmethod
+    def delete_project(
+        db: Session,
+        project_id: int,
+        user_id: int
+    ):
+        project = (
+            db.query(Project)
+            .filter(
+                Project.id == project_id and
+                Project.owner_id == user_id
+            )
+            .first()
+        )
+
+        if not project:
+            raise ValueError("Project not found")
+        
+        if project.owner_id != user_id:
+            return {"message": f"You are not authorized to delete this project .... this project id: ( {project.id} ) is releted to USER id:( {project.owner_id} )"}
+
+        db.delete(project)
+        db.commit()
+
+        return {
+            "message": f"Project {project_id} deleted successfully"
+        }
+        
