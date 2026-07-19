@@ -1,2 +1,2 @@
 from .files import FileResponse
-from .project import ProjectCreate , ProjectResponse , ProjectDetailsResponse
+from .project import ProjectCreate , ProjectResponse , ProjectDetailsResponse, ProjectUpdate

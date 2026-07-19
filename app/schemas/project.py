@@ -33,3 +33,8 @@ class ProjectDetailsResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ProjectUpdate(BaseModel):
+    name: str
+    description: str | None = None

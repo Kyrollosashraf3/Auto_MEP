@@ -6,7 +6,8 @@ from typing import List
 from app.schemas import (
     ProjectCreate,
     ProjectResponse,
-    ProjectDetailsResponse
+    ProjectDetailsResponse,
+    ProjectUpdate
 )
 
 from app.services.project_service import ProjectService
@@ -63,6 +64,28 @@ def delete_project(
             project_id=project_id,
             user_id=current_user.id
         )
+
+
+@router.put(
+    "/{project_id}",
+    response_model=ProjectResponse
+)
+def update_project(
+    project_id: int,
+    project_data: ProjectUpdate,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    try:
+        return ProjectService.update_project(
+            db=db,
+            project_id=project_id,
+            user_id=current_user.id,
+            project_data=project_data
+        )
+    except ValueError as e:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 

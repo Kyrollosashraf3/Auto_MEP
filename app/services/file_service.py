@@ -45,3 +45,34 @@ class FileService:
         db.refresh(file_record)
 
         return file_record
+
+
+    @staticmethod
+    def delete_file(
+        db: Session,
+        project_id: int,
+        file_id: int
+    ):
+        file_record = (
+            db.query(File)
+            .filter(
+                File.id == file_id,
+                File.project_id == project_id
+            )
+            .first()
+        )
+
+        if not file_record:
+            raise ValueError("File not found")
+
+        import os
+        if file_record.file_path and os.path.exists(file_record.file_path):
+            try:
+                os.remove(file_record.file_path)
+            except Exception:
+                pass
+
+        db.delete(file_record)
+        db.commit()
+
+        return {"message": "File deleted successfully"}

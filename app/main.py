@@ -11,6 +11,7 @@ from app.routes.analyser import router as analyser_router
 
 from app.routes.files import router as file_router
 from app.routes.dashboard import router as dashboard_router
+from app.routes.portal import router as portal_router
 
 
 from app.config import get_logger , settings
@@ -43,3 +44,4 @@ app.include_router(project_router)
 app.include_router(file_router) 
 app.include_router(analyser_router)
 app.include_router(dashboard_router)
+app.include_router(portal_router)

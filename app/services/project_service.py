@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.models.project import Project
 from app.models.file import File
 
-from app.schemas.project import ProjectCreate, ProjectDetailsResponse
+from app.schemas.project import ProjectCreate, ProjectDetailsResponse, ProjectUpdate
 from fastapi import HTTPException
 
 
@@ -67,6 +67,32 @@ class ProjectService:
         return {
             "message": f"Project {project_id} deleted successfully"
         }
+
+    @staticmethod
+    def update_project(
+        db: Session,
+        project_id: int,
+        user_id: int,
+        project_data: ProjectUpdate
+    ):
+        project = (
+            db.query(Project)
+            .filter(
+                Project.id == project_id,
+                Project.owner_id == user_id
+            )
+            .first()
+        )
+
+        if not project:
+            raise ValueError("Project not found")
+
+        project.name = project_data.name
+        project.description = project_data.description
+
+        db.commit()
+        db.refresh(project)
+        return project
 
     @staticmethod
     def get_project_by_id(
