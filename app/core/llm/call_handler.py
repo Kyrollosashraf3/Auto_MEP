@@ -11,10 +11,6 @@ def call_model_family(req):
     """Standardized handler for non-streaming LLM requests."""
     logger.info(f"[Call] Processing model: {req.model}")
 
-    context_info = {}
-    combined_contexts = []
-    active_modes = []
-        
     # Ensure user message exists
             
     user_query = None
@@ -28,54 +24,6 @@ def call_model_family(req):
         logger.error("[Chat] No user message found")
         raise ValueError("No user message found in request")
         
-
-
-
-    # WEB SEARCH
-
-    if req.web_search_mode and req.web_search_mode in ["fast", "deep"]:
-        try:
-            search_mode = SearchMode.FAST if req.web_search_mode == "fast" else SearchMode.DEEP
-            perplexity = get_perplexity_client()
-            search_result = perplexity.search(query=user_query, mode=search_mode, temperature=req.web_search_temperature if req.web_search_temperature is not None else 0.2, top_p=req.web_search_top_p if req.web_search_top_p is not None else 0.9, max_tokens=req.web_search_max_tokens if req.web_search_max_tokens is not None else 1024)
-            context_info["web_search"] = {"mode": req.web_search_mode, "result": search_result}
-            web_text = f"Web Search Results ({req.web_search_mode} mode):\n\n{search_result.get('content', '')}\n"
-            citations = search_result.get("citations", [])
-            if citations:
-                web_text += "\n\nSource URLs:\n"
-                for cite in citations:
-                    web_text += f"- {cite}\n"
-                web_text += "\nIMPORTANT: When referencing information from web search, cite using the full URL in square brackets immediately after the information, e.g., [https://example.com]"
-                combined_contexts.append(("Web Search", web_text))
-                active_modes.append("web_search")
-        except (PerplexityError, Exception) as e:
-            logger.error(f"[Chat] Web search error: {type(e).__name__}: {str(e)}")
-
-
-    if combined_contexts:
-        combined_system_content = "You are provided with enriched context from multiple sources. Use ALL the information below to provide a comprehensive, accurate response.\n\n"
-        for mode_name, context_text in combined_contexts:
-            combined_system_content += f"=== {mode_name.upper()} ===\n{context_text}\n\n"
-        combined_system_content += "=== INSTRUCTIONS ===\n"
-            
-        if len(active_modes) > 1:
-            combined_system_content += f"Multiple information sources active: {', '.join(active_modes)}\nSynthesize information from all sources to provide a complete answer.\n"
-        citation_needed = False
-           
-        if "web_search" in active_modes:
-            combined_system_content += "- For web search information: Use the full URL in square brackets immediately after the information, e.g., [https://example.com]\n"
-            citation_needed = True
-        if citation_needed:
-            combined_system_content += "CRITICAL: Cite EVERY fact you use. Citations must be placed immediately after each piece of information.\n"
-           
-        combined_system_content += "\nProvide a natural, conversational response that integrates all available information."
-        context_message = MessageItem(role="system", content=combined_system_content)
-        messages_list = list(req.messages)
-        messages_list.insert(-1, context_message)
-        req.messages = messages_list
-
-            
-
 
     # Stream - Non stream Chat
     family = get_model_family(req.model)

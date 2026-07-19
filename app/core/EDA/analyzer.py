@@ -64,7 +64,6 @@ class DataAnalyzer:
 
         avg_area = round(df["Area m²"].mean(), 2)
 
-        # Approximation فقط للتجربة
         estimated_total_load_w = (
             total_lighting +
             total_equipment +
@@ -92,5 +91,6 @@ class DataAnalyzer:
 
     def basic_info(self, file_id: int):
         df = self.get_df(file_id=file_id)
-        result = self.calc(df=df)
-        return result
+        calc = self.calc(df=df)
+        return calc
+
