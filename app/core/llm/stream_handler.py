@@ -78,6 +78,7 @@ def stream_model_family(req):
     params = prepare_family_parameters(req.dict(), family)
 
     if family == "google":
+        print("Look :", params)
         return stream_response_google(
             model=params["model"],
             contents=params["contents"], 
@@ -85,6 +86,8 @@ def stream_model_family(req):
             temperature=params["temperature"], 
             top_p=params["top_p"]
         )
+
+        
     
     elif family == "openai":
         return stream_response_openai(

@@ -7,16 +7,18 @@ from app.models.schemas import ChatRequest
 
 class ReportGenerator:
 
-
-
+#gemini-2.5-flash
+#llama-3.1-8b-instant
+#gemini-2.0-flash-lite
     def generate_summary(self, calc: dict):
 
         prompt = PromptBuilder.build_project_summary(calc)
 
         req = ChatRequest(
-            model="gemini-2.5-flash",
+            model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}]
         )
 
         resp = call_model_family(req)
+
         return resp

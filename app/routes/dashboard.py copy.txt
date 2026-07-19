@@ -1,4 +1,3 @@
-# app/routes/dashboard.py
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
@@ -28,19 +27,9 @@ def get_dashboard(db: Session = Depends(get_db)):
         for p in projects
     )
 
-    # Create table rows for Files (with Analyze/Report buttons)
+    # Create table rows for Files
     file_rows = "".join(
-        f"""<tr>
-            <td>{f.id}</td>
-            <td>{f.file_name}</td>
-            <td>{f.project_id}</td>
-            <td>{f.uploaded_at}</td>
-            <td>{f.file_path}</td>
-            <td>
-                <button class="action-btn analyze-btn" onclick="runAnalysis({f.id})">Analyze</button>
-                <button class="action-btn report-btn" onclick="runReport({f.id})">Report</button>
-            </td>
-        </tr>"""
+        f"<tr><td>{f.id}</td><td>{f.file_name}</td><td>{f.project_id}</td><td>{f.uploaded_at}</td><td>{f.file_path}</td></tr>"
         for f in files
     )
 
@@ -61,10 +50,8 @@ def get_dashboard(db: Session = Depends(get_db)):
                 --glass-border: rgba(255, 255, 255, 0.1);
                 --accent-1: #3b82f6;
                 --accent-2: #8b5cf6;
-                --success: #22c55e;
-                --danger: #ef4444;
             }}
-
+            
             body {{
                 font-family: 'Outfit', sans-serif;
                 background-color: var(--bg-color);
@@ -72,7 +59,7 @@ def get_dashboard(db: Session = Depends(get_db)):
                 margin: 0;
                 padding: 40px 20px;
                 min-height: 100vh;
-                background-image:
+                background-image: 
                     radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%),
                     radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.15), transparent 25%);
             }}
@@ -202,115 +189,12 @@ def get_dashboard(db: Session = Depends(get_db)):
                 padding: 20px;
                 font-style: italic;
             }}
-
-            .action-btn {{
-                font-family: 'Outfit', sans-serif;
-                border: 1px solid var(--glass-border);
-                background: rgba(255, 255, 255, 0.05);
-                color: var(--text-main);
-                padding: 6px 12px;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 0.8rem;
-                margin-right: 6px;
-                transition: background 0.2s ease, border-color 0.2s ease;
-            }}
-
-            .analyze-btn:hover {{
-                border-color: var(--accent-1);
-                background: rgba(59, 130, 246, 0.15);
-            }}
-
-            .report-btn:hover {{
-                border-color: var(--accent-2);
-                background: rgba(139, 92, 246, 0.15);
-            }}
-
-            /* Modal */
-            .modal-overlay {{
-                display: none;
-                position: fixed;
-                inset: 0;
-                background: rgba(0, 0, 0, 0.6);
-                backdrop-filter: blur(4px);
-                z-index: 1000;
-                align-items: center;
-                justify-content: center;
-            }}
-
-            .modal-overlay.active {{
-                display: flex;
-            }}
-
-            .modal-box {{
-                background: #1e293b;
-                border: 1px solid var(--glass-border);
-                border-radius: 16px;
-                padding: 28px;
-                max-width: 700px;
-                width: 90%;
-                max-height: 80vh;
-                overflow-y: auto;
-                box-shadow: 0 10px 50px rgba(0,0,0,0.5);
-            }}
-
-            .modal-box h3 {{
-                margin-top: 0;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }}
-
-            .modal-close {{
-                cursor: pointer;
-                background: none;
-                border: none;
-                color: var(--text-muted);
-                font-size: 1.4rem;
-                line-height: 1;
-            }}
-
-            .modal-close:hover {{
-                color: var(--text-main);
-            }}
-
-            .kv-table {{
-                width: 100%;
-                border-collapse: collapse;
-            }}
-
-            .kv-table td {{
-                padding: 8px 4px;
-                border-bottom: 1px solid rgba(255,255,255,0.05);
-                font-size: 0.9rem;
-            }}
-
-            .kv-table td:first-child {{
-                color: var(--text-muted);
-                width: 60%;
-            }}
-
-            .report-text {{
-                white-space: pre-wrap;
-                line-height: 1.6;
-                font-size: 0.95rem;
-                color: var(--text-main);
-            }}
-
-            .modal-status {{
-                color: var(--text-muted);
-                font-style: italic;
-            }}
-
-            .modal-error {{
-                color: var(--danger);
-            }}
         </style>
     </head>
     <body>
         <h1>Database Dashboard</h1>
         <div class="container">
-
+            
             <div class="filters-wrapper">
                 <div class="filter-group">
                     <label>User ID</label>
@@ -374,28 +258,14 @@ def get_dashboard(db: Session = Depends(get_db)):
                             <th>Project ID</th>
                             <th>Uploaded At</th>
                             <th>Path</th>
-                            <th>Analysis</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {file_rows if files else '<tr><td colspan="6" class="empty-state">No files found</td></tr>'}
+                        {file_rows if files else '<tr><td colspan="5" class="empty-state">No files found</td></tr>'}
                     </tbody>
                 </table>
             </div>
 
-        </div>
-
-        <!-- Modal -->
-        <div class="modal-overlay" id="modalOverlay">
-            <div class="modal-box">
-                <h3>
-                    <span id="modalTitle">Result</span>
-                    <button class="modal-close" onclick="closeModal()">&times;</button>
-                </h3>
-                <div id="modalBody">
-                    <p class="modal-status">Loading...</p>
-                </div>
-            </div>
         </div>
 
         <script>
@@ -417,114 +287,46 @@ def get_dashboard(db: Session = Depends(get_db)):
                     const matchName = !name || colName.includes(name);
                     const matchEmail = !email || colEmail.includes(email);
 
-                    row.style.display = (matchId && matchName && matchEmail) ? '' : 'none';
+                    if(matchId && matchName && matchEmail) {{
+                        row.style.display = '';
+                    }} else {{
+                        row.style.display = 'none';
+                    }}
                 }});
 
                 // 2. Filter Projects
                 const projectRows = document.querySelectorAll('#projectsTable tbody tr');
                 projectRows.forEach(row => {{
-                    if(row.children.length === 1) return;
+                    if(row.children.length === 1) return; // empty state row
                     const colId = row.children[0].innerText.toLowerCase();
                     const colOwnerId = row.children[3].innerText.toLowerCase();
-
+                    
                     const matchProjectId = !projectId || colId.includes(projectId);
+                    // Filter by User ID on Project Owner ID
                     const matchUserId = !userId || colOwnerId.includes(userId);
 
-                    row.style.display = (matchProjectId && matchUserId) ? '' : 'none';
+                    if(matchProjectId && matchUserId) {{
+                        row.style.display = '';
+                    }} else {{
+                        row.style.display = 'none';
+                    }}
                 }});
 
                 // 3. Filter Files
                 const fileRows = document.querySelectorAll('#filesTable tbody tr');
                 fileRows.forEach(row => {{
-                    if(row.children.length === 1) return;
+                    if(row.children.length === 1) return; // empty state row
                     const colProjectId = row.children[2].innerText.toLowerCase();
 
                     const matchProjectId = !projectId || colProjectId.includes(projectId);
 
-                    row.style.display = matchProjectId ? '' : 'none';
+                    if(matchProjectId) {{
+                        row.style.display = '';
+                    }} else {{
+                        row.style.display = 'none';
+                    }}
                 }});
             }}
-
-            function openModal(title) {{
-                document.getElementById('modalTitle').innerText = title;
-                document.getElementById('modalBody').innerHTML = '<p class="modal-status">Loading...</p>';
-                document.getElementById('modalOverlay').classList.add('active');
-            }}
-
-            function closeModal() {{
-                document.getElementById('modalOverlay').classList.remove('active');
-            }}
-
-            function renderKeyValueTable(data) {{
-                let rows = '';
-                for (const [key, value] of Object.entries(data)) {{
-                    let displayValue = value;
-                    if (Array.isArray(value)) {{
-                        displayValue = value.join(', ');
-                    }} else if (value === null || value === undefined) {{
-                        displayValue = '-';
-                    }}
-                    rows += `<tr><td>${{key}}</td><td>${{displayValue}}</td></tr>`;
-                }}
-                return `<table class="kv-table"><tbody>${{rows}}</tbody></table>`;
-            }}
-
-            async function runAnalysis(fileId) {{
-                openModal('Analysis - File #' + fileId);
-                try {{
-                    const res = await fetch(`/analysis/${{fileId}}`);
-                    if (!res.ok) {{
-                        const err = await res.json().catch(() => ({{}}));
-                        throw new Error(err.detail || `Request failed (${{res.status}})`);
-                    }}
-                    const data = await res.json();
-                    document.getElementById('modalBody').innerHTML = renderKeyValueTable(data);
-                }} catch (e) {{
-                    document.getElementById('modalBody').innerHTML =
-                        `<p class="modal-error">Error: ${{e.message}}</p>`;
-                }}
-            }}
-
-            async function runReport(fileId) {{
-                openModal('Report - File #' + fileId);
-                try {{
-                    const res = await fetch(`/analysis/generate_report/${{fileId}}`);
-                    if (!res.ok) {{
-                        const err = await res.json().catch(() => ({{}}));
-                        throw new Error(err.detail || `Request failed (${{res.status}})`);
-                    }}
-                    const data = await res.json();
-
-                    // The LLM response shape can vary by provider - try to extract readable text
-                    let text = '';
-                    if (typeof data === 'string') {{
-                        text = data;
-                    }} else if (data.text) {{
-                        text = data.text;
-                    }} else if (data.content) {{
-                        text = typeof data.content === 'string' ? data.content : JSON.stringify(data.content, null, 2);
-                    }} else if (data.candidates) {{
-                        // Google-style response
-                        try {{
-                            text = data.candidates[0].content.parts.map(p => p.text).join('\\n');
-                        }} catch {{
-                            text = JSON.stringify(data, null, 2);
-                        }}
-                    }} else {{
-                        text = JSON.stringify(data, null, 2);
-                    }}
-
-                    document.getElementById('modalBody').innerHTML =
-                        `<div class="report-text">${{text}}</div>`;
-                }} catch (e) {{
-                    document.getElementById('modalBody').innerHTML =
-                        `<p class="modal-error">Error: ${{e.message}}</p>`;
-                }}
-            }}
-
-            document.getElementById('modalOverlay').addEventListener('click', (e) => {{
-                if (e.target.id === 'modalOverlay') closeModal();
-            }});
         </script>
     </body>
     </html>
