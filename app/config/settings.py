@@ -30,6 +30,8 @@ class Settings(BaseSettings):
     MODELS_JSON_PATH: str
     
 
+    # Model Selection
+    cooling_report_model: str
 
     # PostgreSQL
     DATABASE_URL: str
