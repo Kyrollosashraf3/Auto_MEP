@@ -20,8 +20,8 @@ class Settings(BaseSettings):
     FILE_ALLOWED_TYPES: List[str]
     FILE_ALLOWED_SIZE: int 
 
-    FILE_PATH: Path
-
+    #FILE_PATH: Path
+    TEMP_FOLDER_NAME: str 
         
     # LLM  
     OPENAI_API_KEY: str

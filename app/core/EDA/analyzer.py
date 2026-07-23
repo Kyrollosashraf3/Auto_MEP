@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 
 from app.models.file import File
+from app.models.project import Project
 
 
 class DataAnalyzer:
@@ -119,7 +120,7 @@ class DataAnalyzer:
 
         estimated_tr = estimated_total_load_w / 3517
 
-        return {
+        calc =  {
             "total_rooms": total_rooms,
 
             "room_names": df["Room Name"].tolist(),
@@ -209,6 +210,10 @@ class DataAnalyzer:
             )
         }
 
+        calc = DataAnalyzer.convert_numpy(calc)
+
+        return calc
+
     # ==========================================================
     # Convert NumPy Objects
     # ==========================================================
@@ -256,12 +261,17 @@ class DataAnalyzer:
 
         df = self.get_df(file_id)
 
+        file_name, project_name = self.get_file_data(file_id)
+
         calc = self.calc(df)
 
-        calc = DataAnalyzer.convert_numpy(calc)
+        analysis_result = {
+            "calc": calc,
+            "file_name": file_name,
+            "project_name": project_name
+        }
 
-        return calc
-
+        return analysis_result
 
 
 

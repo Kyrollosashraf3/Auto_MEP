@@ -4,6 +4,7 @@ Auto MEP is a production-ready engineering platform designed to automate Mechani
 
 The primary objective of the system is to **reduce engineering time**, **eliminate repetitive manual tasks**, and provide a scalable foundation for AI-driven engineering automation.
 
+Built By 👨‍💻 - Kyrollos Ashraf
 ---
 
 # ⚙️ Setup & Installation
@@ -23,6 +24,12 @@ pip install -r requirements.txt
 # 4. Run the FastAPI development server
 uvicorn app.main:app --reload
 ```
+
+
+conda activate mep
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+
 
 ---
 
@@ -186,64 +193,3 @@ The platform serves as a flexible foundation for building next-generation AI sol
 
 
 
-
-
-🚀 Excited to share one of my recent AI Engineering projects: Auto MEP
-
-
-
-Auto MEP is an AI-powered engineering platform that automates repetitive MEP (Mechanical, Electrical & Plumbing) workflows.
-
-
-
-Instead of spending hours manually reviewing spreadsheets, calculating engineering metrics, and preparing reports, engineers simply upload an Excel or CSV file and receive engineering insights and consultant-level reports within seconds.
-
-
-
-What I built:
-
- ✅ JWT Authentication & Project Management
-
- ✅ File Validation and Processing (Excel / CSV)
-
- ✅ Engineering Load Analysis Engine
-
- ✅ AI-powered Report Generation using OpenAI, Gemini, and Groq
-
- ✅ Modular architecture designed for future AI workflows
-
-
-
-More importantly, I didn't build it as a single-use application.
-
-The platform was designed as a scalable AI foundation where new engineering modules can be added easily, including:
-
-Advanced engineering calculations
-
-Intelligent document analysis
-
-RAG-powered knowledge retrieval
-
-AI Agents
-
-Automated feasibility studies
-
-BOQ generation
-
-Engineering validation workflows
-
-And many other repetitive engineering processes that can be transformed into reliable AI-powered automation.
-
-
-
-I believe AI creates the greatest value when it is integrated into real business workflows—not by replacing expertise, but by automating repetitive work, improving consistency, and allowing engineers to focus on higher-value decisions.
-
-
-
-This project reflects the kind of AI systems I enjoy building: practical, scalable, production-oriented, and designed to solve real problems.
-
-
-
-I'm continuously learning and looking forward to building more AI solutions that create measurable business impact.
-
-#AI #AIEngineer #Python #FastAPI #LLM #GenerativeAI #Automation #RAG #Engineering #Backend #SoftwareEngineering #OpenAI #Gemini #Groq #MEP #HVAC #MachineLearning #ArtificialIntelligence
