@@ -45,10 +45,13 @@ def download_analysis(
         content=calc,
     )
 
+    safe_file = file_name.rsplit(".", 1)[0].replace(" ", "_").replace("/", "_")
+    safe_project = project_name.replace(" ", "_").replace("/", "_")
+
     return FileResponse(
         path=pdf_path,
         media_type="application/pdf",
-        filename=f"Project_Analysis_{file_id}.pdf"
+        filename=f"{safe_file}_{safe_project}_analysis.pdf"
     )
 
 
@@ -70,9 +73,6 @@ def generate_report(
 
     return report
 
-
-from fastapi.responses import FileResponse
-from app.core.file.pdf_generator import PDFGenerator
 
 
 @router.get("/generate_report/{file_id}/download")
@@ -96,9 +96,12 @@ def download_report(
         content=report["text"],
     )
 
+    safe_file = file_name.rsplit(".", 1)[0].replace(" ", "_").replace("/", "_")
+    safe_project = project_name.replace(" ", "_").replace("/", "_")
+
     return FileResponse(
         path=pdf_path,
         media_type="application/pdf",
-        filename=f"Engineering_Report_{file_id}.pdf"
+        filename=f"{safe_file}_{safe_project}_report.pdf"
     )
 

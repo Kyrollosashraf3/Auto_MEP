@@ -3,6 +3,7 @@ Mega AI Agent - Main FastAPI Application
 Production-ready AI agent with RAG, memory, and chat history.
 """
 from fastapi import FastAPI, Request, status
+from fastapi.middleware.cors import CORSMiddleware
 from app.routes.base import router as home_router
 from app.routes.chat import router as chat_router
 from app.routes.auth import router as auth_router
@@ -23,6 +24,22 @@ app = FastAPI(
     version=settings.APP_VERSION,
     description=settings.APP_DESCRIPTION
 )   
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:8080",
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+        "http://127.0.0.1:8080",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["Content-Disposition"],
+)
 
 
 # DataBase

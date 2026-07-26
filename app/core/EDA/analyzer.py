@@ -9,8 +9,9 @@ from fastapi import HTTPException, status
 
 from app.models.file import File
 from app.models.project import Project
+from app.models.analysis_result import AnalysisResult
 
-
+# ==========================================================
 class DataAnalyzer:
 
     def __init__(self, db: Session):
@@ -252,17 +253,39 @@ class DataAnalyzer:
             return obj.tolist()
 
         return obj
+        
+    def get_file_data(self, file_id: int) -> dict: 
+        file_record = ( self.db.query(File, Project.name) .
+                        join(Project, File.project_id == Project.id) 
+                        .filter(File.id == file_id) 
+                        .first() 
+                      ) 
 
+        
+        if not file_record: 
+            raise HTTPException( status_code=status.HTTP_404_NOT_FOUND, detail="File not found" ) 
+        
+        file = file_record[0] 
+        project_name = file_record[1] 
+        return ( file.file_name, project_name, )
     # ==========================================================
     # Public Method
     # ==========================================================
 
     def basic_info(self, file_id: int):
+        
+        cache = self.get_cached_result(file_id, "analysis")
 
+        if cache:
+            analysis_result = {
+                "calc": cache.result_json,
+                "file_name": cache.file_name,
+                "project_name": cache.project_name
+            }
+            return analysis_result
+        
         df = self.get_df(file_id)
-
         file_name, project_name = self.get_file_data(file_id)
-
         calc = self.calc(df)
 
         analysis_result = {
@@ -271,12 +294,47 @@ class DataAnalyzer:
             "project_name": project_name
         }
 
+        self.save_result(file_id, "analysis", calc, file_name, project_name)
+
         return analysis_result
 
 
 
 
 
+
+
+    def get_cached_result(self, file_id: int, type_: str):
+        return (
+            self.db.query(AnalysisResult)
+            .filter(
+                AnalysisResult.file_id == file_id,
+                AnalysisResult.type == type_
+            )
+            .first()
+        )
+
+
+    def save_result(self, file_id: int, type_: str, calc: dict, file_name: str, project_name: str):
+        existing = self.get_cached_result(file_id, type_)
+
+        if existing:
+            existing.result_json = calc
+            existing.file_name = file_name
+            existing.project_name = project_name
+        else:
+            existing = AnalysisResult(
+                file_id=file_id,
+                type=type_,
+                result_json=calc,
+                file_name=file_name,
+                project_name=project_name
+            )
+            self.db.add(existing)
+
+        self.db.commit()
+        self.db.refresh(existing)
+        return existing
 
 
 

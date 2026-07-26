@@ -24,12 +24,47 @@ pip install -r requirements.txt
 # 4. Run the FastAPI development server
 uvicorn app.main:app --reload
 ```
+/c/Users/Kyrollos/.opencode/bin/opencode --version
 
 
+# 📝 Frontend Setup
+
+To set up the frontend, navigate to the `frontend` directory and run:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+This will install the necessary dependencies and start the development server.
+
+---
+
+# 📄 API Endpoints
+
+## Authentication
+
+### Register
+
+- **Endpoint:** `POST /auth/register`
+- **Payload:**
+  ```json
+  {
+    "full_name": "KYROLLOS ASHRAF",
+    "email": "KYROLLOS@example.com",
+    "password": "securepassword123",
+    "role": "Engineer"
+  }
 conda activate mep
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 
+
+# to run next
+
+cd frontend 
+npm run dev
 
 ---
 
