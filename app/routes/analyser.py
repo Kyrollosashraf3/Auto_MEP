@@ -68,8 +68,10 @@ def generate_report(
     analysis_result = analyzer.basic_info(file_id)
     
     calc = analysis_result["calc"]
+    file_name = analysis_result["file_name"]
+    project_name = analysis_result["project_name"]
 
-    report = ReportGenerator().generate_summary(calc)
+    report = ReportGenerator(db).generate_summary(calc, file_id=file_id, file_name=file_name, project_name=project_name)
 
     return report
 
@@ -88,12 +90,14 @@ def download_report(
     project_name = analysis_result["project_name"]
 
 
-    report = ReportGenerator().generate_summary(calc)
+    report = ReportGenerator(db).generate_summary(calc, file_id=file_id, file_name=file_name, project_name=project_name)
+
+    report_text = report.get("text", "") if isinstance(report, dict) else str(report)
 
     pdf_path = PDFGenerator.generate(
         file_name= file_name,
         project_name= project_name,
-        content=report["text"],
+        content=report_text,
     )
 
     safe_file = file_name.rsplit(".", 1)[0].replace(" ", "_").replace("/", "_")

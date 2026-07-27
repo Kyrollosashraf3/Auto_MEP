@@ -22,3 +22,9 @@ __pycache__/
 
 my_files
 app.log
+
+# SQLite local database — never commit this
+*.db
+*.db-shm
+*.db-wal
+automep.db

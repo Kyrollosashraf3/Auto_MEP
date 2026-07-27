@@ -49,6 +49,7 @@ from app.db.database import engine
 from app.models.user import User
 from app.models.project import Project
 from app.models.file import File
+from app.models.analysis_result import AnalysisResult
 
 Base.metadata.create_all(bind=engine)
 

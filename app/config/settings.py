@@ -3,7 +3,7 @@ Settings module for Mega AI Agent.
 Configuration management using pydantic-settings.
 """
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import List, Optional
+from typing import List, Optional, Literal
 from pathlib import Path
 
 class Settings(BaseSettings):
@@ -23,18 +23,22 @@ class Settings(BaseSettings):
     #FILE_PATH: Path
     TEMP_FOLDER_NAME: str 
         
-    # LLM  
-    OPENAI_API_KEY: str
-    GOOGLE_API_KEY: str
-    GROQ_API_KEY: str
+    # LLM Keys (optional in local/SQLite mode)
+    OPENAI_API_KEY: Optional[str] = None
+    GOOGLE_API_KEY: Optional[str] = None
+    GROQ_API_KEY: Optional[str] = None
     MODELS_JSON_PATH: str
-    
 
     # Model Selection
-    cooling_report_model: str
+    cooling_report_model: Optional[str] = None
 
-    # PostgreSQL
-    DATABASE_URL: str
+    # Database — supports 'sqlite' (local) or 'postgres' (production)
+    DATABASE_TYPE: Literal["sqlite", "postgres"] = "sqlite"
+    DATABASE_URL: str = "sqlite:///./automep.db"
+
+    @property
+    def is_sqlite(self) -> bool:
+        return self.DATABASE_TYPE == "sqlite" or self.DATABASE_URL.startswith("sqlite")
 
     # JWT Authentication
     SECRET_KEY: str = "supersecretkey_for_development_only_please_change"
