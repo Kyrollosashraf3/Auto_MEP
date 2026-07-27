@@ -9,13 +9,18 @@ from app.schemas.auth import Token, UserCreate, UserResponse
 from app.core.security import verify_password, get_password_hash, create_access_token
 from app.core.deps import get_current_user, RoleChecker
 from app.config.settings import settings
+from app.config.logger import get_logger
+
+logger = get_logger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 @router.post("/register", response_model=UserResponse)
 def register_user(user_in: UserCreate, db: Session = Depends(get_db)):
+    logger.info(f"Register attempt for email: {user_in.email}")
     user = db.query(User).filter(User.email == user_in.email).first()
     if user:
+        logger.warning(f"Registration failed - email already exists: {user_in.email}")
         raise HTTPException(
             status_code=400,
             detail="The user with this email already exists in the system.",
@@ -30,6 +35,7 @@ def register_user(user_in: UserCreate, db: Session = Depends(get_db)):
     db.add(user_db)
     db.commit()
     db.refresh(user_db)
+    logger.info(f"User registered successfully: {user_in.email} (id={user_db.id})")
     return user_db
 
 @router.post("/login", response_model=Token)
@@ -37,8 +43,10 @@ def login_access_token(
     db: Session = Depends(get_db), 
     form_data: OAuth2PasswordRequestForm = Depends()
 ):
+    logger.info(f"Login attempt for email: {form_data.username}")
     user = db.query(User).filter(User.email == form_data.username).first()
     if not user or not verify_password(form_data.password, user.password_hash):
+        logger.warning(f"Login failed for email: {form_data.username}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
@@ -48,6 +56,7 @@ def login_access_token(
     access_token = create_access_token(
         subject=user.id, expires_delta=access_token_expires
     )
+    logger.info(f"Login successful for email: {form_data.username} (id={user.id})")
     return {"access_token": access_token, "token_type": "bearer"}
 
 
@@ -59,9 +68,7 @@ allow_admins_only = RoleChecker(["admin", "manager"])
 def get_user_me(
     current_user: User = Depends(get_current_user)
 ):
-    """
-    Get current logged in user. Any authenticated user can access this.
-    """
+    logger.debug(f"Token validated for user: {current_user.email}")
     return current_user
 
 @router.get("/admin-only", response_model=dict)

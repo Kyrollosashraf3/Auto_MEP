@@ -10,7 +10,9 @@ from app.db.database import get_db
 from app.schemas.files import FileResponse
 
 from app.services.file_service import FileService
+from app.config.logger import get_logger
 
+logger = get_logger(__name__)
 
 router = APIRouter(
     prefix="/projects",
@@ -27,7 +29,7 @@ def upload_file(
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
-
+    logger.info(f"Uploading file '{file.filename}' to project {project_id}")
     return FileService.upload_file(
         db=db,
         project_id=project_id,
@@ -44,6 +46,7 @@ def delete_file(
     file_id: int,
     db: Session = Depends(get_db)
 ):
+    logger.info(f"Deleting file {file_id} from project {project_id}")
     try:
         return FileService.delete_file(
             db=db,
@@ -51,5 +54,6 @@ def delete_file(
             file_id=file_id
         )
     except ValueError as e:
+        logger.warning(f"File delete failed: {e}")
         from fastapi import HTTPException
         raise HTTPException(status_code=404, detail=str(e))

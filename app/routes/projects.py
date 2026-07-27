@@ -12,7 +12,9 @@ from app.schemas import (
 
 from app.services.project_service import ProjectService
 from app.core.deps import get_current_user
+from app.config.logger import get_logger
 
+logger = get_logger(__name__)
 
 router = APIRouter(
     prefix="/projects",
@@ -29,7 +31,7 @@ def create_project(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
-
+    logger.info(f"Creating project '{project_data.name}' for user {current_user.id}")
     return ProjectService.create_project(
             db=db,
             project_data=project_data,
@@ -45,7 +47,7 @@ def get_projects(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
-
+    logger.debug(f"Listing projects for user {current_user.id}")
     return ProjectService.get_projects( 
             db=db,
             owner_id=current_user.id)    
@@ -59,6 +61,7 @@ def delete_project(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
+    logger.info(f"Deleting project {project_id} for user {current_user.id}")
     return ProjectService.delete_project(
             db=db,
             project_id=project_id,
@@ -76,6 +79,7 @@ def update_project(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
+    logger.info(f"Updating project {project_id} for user {current_user.id}")
     try:
         return ProjectService.update_project(
             db=db,
@@ -84,6 +88,7 @@ def update_project(
             project_data=project_data
         )
     except ValueError as e:
+        logger.warning(f"Project update failed: {e}")
         from fastapi import HTTPException
         raise HTTPException(status_code=404, detail=str(e))
 

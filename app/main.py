@@ -13,6 +13,7 @@ from app.routes.analyser import router as analyser_router
 from app.routes.files import router as file_router
 from app.routes.dashboard import router as dashboard_router
 from app.routes.portal import router as portal_router
+from app.routes.logs import router as logs_router
 
 
 from app.config import get_logger , settings
@@ -54,6 +55,9 @@ from app.models.analysis_result import AnalysisResult
 Base.metadata.create_all(bind=engine)
 
 
+logger.info("Starting Auto MEP application...")
+logger.info(f"App: {settings.APP_NAME} v{settings.APP_VERSION}")
+
 app.include_router(home_router) # Health check, usually kept public
 app.include_router(auth_router)
 
@@ -63,3 +67,6 @@ app.include_router(file_router)
 app.include_router(analyser_router)
 app.include_router(dashboard_router)
 app.include_router(portal_router)
+app.include_router(logs_router)
+
+logger.info("All routes registered successfully")

@@ -5,6 +5,9 @@ from app.core.llm.call_handler import call_model_family
 from app.models.schemas import ChatRequest
 from app.models.analysis_result import AnalysisResult
 from app.config.settings import settings
+from app.config.logger import get_logger
+
+logger = get_logger(__name__)
 
 class ReportGenerator:
 
@@ -48,8 +51,10 @@ class ReportGenerator:
         if file_id and self.db:
             cached = self.get_cached_report(file_id)
             if cached:
+                logger.info(f"Report cache hit for file {file_id}")
                 return cached.result_json
 
+        logger.info(f"Generating LLM report for file {file_id} ({file_name})")
         prompt = PromptBuilder.build_project_summary(calc)
 
         req = ChatRequest(
@@ -63,4 +68,5 @@ class ReportGenerator:
         if file_id and self.db:
             self.save_report(file_id, resp, file_name, project_name)
 
+        logger.info(f"LLM report generated for file {file_id}")
         return resp

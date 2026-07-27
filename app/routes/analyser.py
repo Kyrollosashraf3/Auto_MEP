@@ -5,6 +5,9 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.core.EDA import DataAnalyzer , ReportGenerator
 from app.core.file.pdf_generator import PDFGenerator
+from app.config.logger import get_logger
+
+logger = get_logger(__name__)
 
 router = APIRouter(
     prefix="/analysis",
@@ -17,11 +20,13 @@ def analyze_file(
     file_id: int,
     db: Session = Depends(get_db)
 ):
+    logger.info(f"Analyzing file {file_id}")
     analyzer = DataAnalyzer(db)
 
     analysis_result = analyzer.basic_info(file_id)
     calc = analysis_result["calc"]
 
+    logger.info(f"Analysis complete for file {file_id}")
     return calc
 
 
@@ -30,6 +35,7 @@ def download_analysis(
     file_id: int,
     db: Session = Depends(get_db)
 ):
+    logger.info(f"Generating analysis PDF for file {file_id}")
     analyzer = DataAnalyzer(db)
 
     analysis_result = analyzer.basic_info(file_id)
@@ -48,6 +54,7 @@ def download_analysis(
     safe_file = file_name.rsplit(".", 1)[0].replace(" ", "_").replace("/", "_")
     safe_project = project_name.replace(" ", "_").replace("/", "_")
 
+    logger.info(f"Analysis PDF ready: {safe_file}_{safe_project}_analysis.pdf")
     return FileResponse(
         path=pdf_path,
         media_type="application/pdf",
@@ -63,6 +70,7 @@ def generate_report(
     file_id: int,
     db: Session = Depends(get_db)
 ):
+    logger.info(f"Generating report for file {file_id}")
     analyzer = DataAnalyzer(db)
 
     analysis_result = analyzer.basic_info(file_id)
@@ -73,6 +81,7 @@ def generate_report(
 
     report = ReportGenerator(db).generate_summary(calc, file_id=file_id, file_name=file_name, project_name=project_name)
 
+    logger.info(f"Report generated for file {file_id}")
     return report
 
 
@@ -82,6 +91,7 @@ def download_report(
     file_id: int,
     db: Session = Depends(get_db)
 ):
+    logger.info(f"Generating report PDF for file {file_id}")
     analyzer = DataAnalyzer(db)
     analysis_result = analyzer.basic_info(file_id)
     
@@ -103,6 +113,7 @@ def download_report(
     safe_file = file_name.rsplit(".", 1)[0].replace(" ", "_").replace("/", "_")
     safe_project = project_name.replace(" ", "_").replace("/", "_")
 
+    logger.info(f"Report PDF ready: {safe_file}_{safe_project}_report.pdf")
     return FileResponse(
         path=pdf_path,
         media_type="application/pdf",

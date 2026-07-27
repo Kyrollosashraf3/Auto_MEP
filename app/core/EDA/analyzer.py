@@ -10,6 +10,9 @@ from fastapi import HTTPException, status
 from app.models.file import File
 from app.models.project import Project
 from app.models.analysis_result import AnalysisResult
+from app.config.logger import get_logger
+
+logger = get_logger(__name__)
 
 # ==========================================================
 class DataAnalyzer:
@@ -277,6 +280,7 @@ class DataAnalyzer:
         cache = self.get_cached_result(file_id, "analysis")
 
         if cache:
+            logger.info(f"Analysis cache hit for file {file_id}")
             analysis_result = {
                 "calc": cache.result_json,
                 "file_name": cache.file_name,
@@ -284,6 +288,7 @@ class DataAnalyzer:
             }
             return analysis_result
         
+        logger.info(f"Running analysis for file {file_id}")
         df = self.get_df(file_id)
         file_name, project_name = self.get_file_data(file_id)
         calc = self.calc(df)

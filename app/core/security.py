@@ -3,6 +3,9 @@ from typing import Any, Union
 import jwt
 from passlib.context import CryptContext
 from app.config.settings import settings
+from app.config.logger import get_logger
+
+logger = get_logger(__name__)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -23,4 +26,5 @@ def create_access_token(
         )
     to_encode = {"exp": expire, "sub": str(subject)}
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    logger.debug(f"Access token created for subject={subject}")
     return encoded_jwt
