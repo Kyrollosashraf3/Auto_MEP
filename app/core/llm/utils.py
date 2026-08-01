@@ -75,7 +75,7 @@ def prepare_family_parameters(req: dict, family: str) -> dict:
 
     messages = req.get("messages", [])
     
-    if family in ["openai", "groq"]:
+    if family in ["openai", "groq","anthropic"]:
         base["messages"] = messages
         # Special handling for gpt-5 models which may not support temperature/top_p
         if base["model"].startswith("gpt-5"):

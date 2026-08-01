@@ -5,7 +5,7 @@ from app.config.logger import get_logger
 from app.core.llm.families.google import stream_response_google
 from app.core.llm.families.openai import stream_response_openai
 from app.core.llm.families.groq  import stream_response_groq
-
+from app.core.llm.families.anthropic import stream_response_anthropic
 logger = get_logger(__name__)
 
 def stream_model_family(req):
@@ -105,6 +105,14 @@ def stream_model_family(req):
            max_tokens=params["max_tokens"],
            temperature=params["temperature"],
            top_p=params["top_p"]
+        )
+    elif family == "anthropic":
+        return stream_response_anthropic(
+            model=params["model"],
+            messages=params["messages"], 
+            max_tokens=params["max_tokens"], 
+            temperature=params["temperature"], 
+            top_p=params["top_p"]
         )
 
     else:
