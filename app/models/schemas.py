@@ -22,4 +22,5 @@ class ChatRequest(BaseModel):
     web_search_temperature: Optional[float] = None
     web_search_top_p: Optional[float] = None
     stream: Optional[bool] = False
+    thinking: Optional[bool] = True
 

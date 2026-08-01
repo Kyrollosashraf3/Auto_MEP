@@ -46,7 +46,7 @@ class ReportGenerator:
         self.db.commit()
         self.db.refresh(existing)
 
-    def generate_summary(self, calc: dict, file_id: int = None, file_name: str = "", project_name: str = ""):
+    def generate_summary(self, calc: dict, file_id: int = None, file_name: str = "", project_name: str = "", thinking: bool = False):
 
         if file_id and self.db:
             cached = self.get_cached_report(file_id)
@@ -54,12 +54,13 @@ class ReportGenerator:
                 logger.info(f"Report cache hit for file {file_id}")
                 return cached.result_json
 
-        logger.info(f"Generating LLM report for file {file_id} ({file_name})")
+        logger.info(f"Generating LLM report for file {file_id} ({file_name}) thinking={thinking}")
         prompt = PromptBuilder.build_project_summary(calc)
 
         req = ChatRequest(
             model= settings.cooling_report_model,
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role": "user", "content": prompt}],
+            thinking=thinking
         )
 
         resp = call_model_family(req)
@@ -68,5 +69,5 @@ class ReportGenerator:
         if file_id and self.db:
             self.save_report(file_id, resp, file_name, project_name)
 
-        logger.info(f"LLM report generated for file {file_id}")
+        logger.info(f"LLM model name = {settings.cooling_report_model} report generated for file {file_id}")
         return resp

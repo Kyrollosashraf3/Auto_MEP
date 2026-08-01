@@ -62,6 +62,7 @@ app.include_router(home_router) # Health check, usually kept public
 app.include_router(auth_router)
 
 #app.include_router(chat_router)
+app.include_router(chat_router)
 app.include_router(project_router)
 app.include_router(file_router) 
 app.include_router(analyser_router)

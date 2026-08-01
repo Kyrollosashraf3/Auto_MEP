@@ -71,11 +71,12 @@ def prepare_family_parameters(req: dict, family: str) -> dict:
         "frequency_penalty": req.get("frequency_penalty", 0),
         "presence_penalty": req.get("presence_penalty", 0),
         "stream": req.get("stream", False),
+        "thinking": req.get("thinking", True),
     }
 
     messages = req.get("messages", [])
     
-    if family in ["openai", "groq","anthropic"]:
+    if family in ["openai", "groq", "anthropic", "opencode"]:
         base["messages"] = messages
         # Special handling for gpt-5 models which may not support temperature/top_p
         if base["model"].startswith("gpt-5"):

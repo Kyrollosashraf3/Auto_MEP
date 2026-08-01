@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     GOOGLE_API_KEY: Optional[str] = None
     GROQ_API_KEY: Optional[str] = None
     ANTHROPIC_API_KEY: Optional[str] = None
+    OPENCODE_API_KEY: Optional[str] = None
     MODELS_JSON_PATH: str
 
     # Model Selection

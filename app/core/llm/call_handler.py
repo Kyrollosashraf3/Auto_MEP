@@ -5,6 +5,7 @@ from app.core.llm.families.google import get_response_google
 from app.core.llm.families.openai import get_response_openai
 from app.core.llm.families.groq  import get_response_groq
 from app.core.llm.families.anthropic import get_response_anthropic
+from app.core.llm.families.opencode import get_response_opencode
 
 logger = get_logger(__name__)
 
@@ -62,6 +63,15 @@ def call_model_family(req):
             max_tokens=params["max_tokens"],
             temperature=params["temperature"],
             top_p=params["top_p"]
+        )
+    elif family == "opencode":
+        return get_response_opencode(
+            model=params["model"],
+            messages=params["messages"],
+            max_tokens=params["max_tokens"],
+            temperature=params["temperature"],
+            top_p=params["top_p"],
+            thinking=params.get("thinking", True)
         )
     else:
         logger.error(f"[Call] Unsupported model family for non-streaming: {family}")
