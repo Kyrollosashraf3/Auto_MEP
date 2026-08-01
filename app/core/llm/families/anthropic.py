@@ -1,11 +1,12 @@
 from anthropic import Anthropic
+
 from app.config.settings import settings
-from app.core.token_counter import format_usage_response
-from app.core.logger import get_logger
+from app.core.llm.token_counter import format_usage_response
+from app.config.logger import get_logger
 
 logger = get_logger(__name__)
 
-def stream_response_anthropic(model: str, messages: list, max_tokens: int, temperature: float, system: str = None):
+def stream_response_anthropic(model: str, messages: list, max_tokens: int, temperature: float, top_p: float = None, system: str = None):
     client = Anthropic(api_key=settings.ANTHROPIC_API_KEY, timeout=120.0)
     
     system_content = system if system else ""
@@ -24,6 +25,8 @@ def stream_response_anthropic(model: str, messages: list, max_tokens: int, tempe
         system_content = "\n\n".join(system_parts) if not system_content else system_content + "\n\n" + "\n\n".join(system_parts)
     
     params = {"model": model, "max_tokens": max_tokens, "temperature": temperature, "messages": filtered_messages}
+    if top_p is not None:
+        params["top_p"] = top_p
     if system_content:
         params["system"] = system_content
     
@@ -32,7 +35,7 @@ def stream_response_anthropic(model: str, messages: list, max_tokens: int, tempe
             if event.type == "content_block_delta" and hasattr(event.delta, "text"):
                 yield event.delta.text
 
-def get_response_anthropic(model: str, messages: list, max_tokens: int, temperature: float, system: str = None):
+def get_response_anthropic(model: str, messages: list, max_tokens: int, temperature: float, top_p: float = None, system: str = None):
     client = Anthropic(api_key=settings.ANTHROPIC_API_KEY, timeout=120.0)
 
     system_content = system if system else ""
@@ -53,6 +56,8 @@ def get_response_anthropic(model: str, messages: list, max_tokens: int, temperat
 
     try:
         params = {"model": model, "max_tokens": max_tokens, "temperature": temperature, "messages": filtered_messages}
+        if top_p is not None:
+            params["top_p"] = top_p
         if system_content:
             params["system"] = system_content
         
